@@ -241,6 +241,7 @@ const createDetailsTable = (data) => {
 
   Object.entries(data).forEach(([key, value]) => {
     const tr = document.createElement("tr");
+
     tr.innerHTML = `<td>${key}</td><td class='detalisValueCell'>${value}</td>`;
     tableBody.appendChild(tr);
   });
@@ -256,6 +257,7 @@ const fillTableHead = () => {
 
   headerNames.forEach((header) => {
     const tableHeadCell = document.createElement("th");
+
     tableHeadCell.innerHTML = header.replace("_", " ").toUpperCase();
     if (header === "id") {
       tableHeadCell.className = "idCell";
@@ -430,20 +432,6 @@ const formatDate = (dateString) => {
   month = month < 10 ? `0${month}` : month;
 
   return `${day}-${month}-${year} `;
-};
-
-const playSound = (character) => {
-  if (sounds[character] > maxSounds[character]) {
-    sounds[character] = 1;
-  }
-
-  const voice = new Audio(
-    `sounds/${character}/${character}${sounds[character]}.wav`
-  );
-  voice.play();
-
-  textFromKeyboard = "";
-  sounds[character]++;
 };
 
 const removeRow = (rowIndex) => {
@@ -640,6 +628,20 @@ const handlePagination = (direction) => {
 
   const filteredData = filterData();
   createTableBody(filteredData);
+};
+
+const playSound = (character) => {
+  if (sounds[character] > maxSounds[character]) {
+    sounds[character] = 1;
+  }
+
+  const voice = new Audio(
+    `sounds/${character}/${character}${sounds[character]}.wav`
+  );
+  voice.play();
+
+  textFromKeyboard = "";
+  sounds[character]++;
 };
 
 window.addEventListener("keydown", (e) => {

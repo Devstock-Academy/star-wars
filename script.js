@@ -83,7 +83,22 @@ const createButtons = () => {
 };
 createButtons();
 
+const addStarWarsLogo = () => {
+  const logo = document.createElement("img");
+
+  logo.src = "./images/starWars.png";
+  logo.id = "logo";
+
+  contentWrapper.appendChild(logo);
+};
+
+addStarWarsLogo();
+
 const handleButtonClick = (e) => {
+  const logo = document.querySelector("#logo");
+
+  if (logo) logo.remove();
+
   clickedButtonName = e.target.innerHTML;
   fullTableRecords = preparedTableData();
 
@@ -180,6 +195,7 @@ const filterData = () => {
   }
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
+
   filteredData = filteredData.slice(startIndex, endIndex);
 
   return filteredData;
@@ -268,14 +284,9 @@ const fillSearchBar = () => {
 
 const handleSearchById = (e, searchById) => {
   const value = parseInt(e.target.value, 10);
-  const maxValue = parseInt(searchById.max, 10);
 
   if (value <= 0 || isNaN(value)) {
     searchById.value = null;
-  }
-  if (maxValue < value) {
-    searchById.value = filters.searchId;
-    return;
   }
 
   filters.searchId = value;
@@ -389,7 +400,7 @@ const showDetails = (rowIndex) => {
 
   body.classList.add("modal-open");
   modalContainer.id = "modalContainer";
-  closeButton.innerHTML = "Zamknij szczegóły";
+  closeButton.innerHTML = "Close";
 
   closeButton.addEventListener("click", () => {
     modalContainer.remove();
@@ -518,7 +529,7 @@ const handleCheckbox = (e, id) => {
   if (hasCheckedItems && !removeAllButton) {
     const removeCheckedElementsButton = document.createElement("button");
 
-    removeCheckedElementsButton.textContent = "Remove All";
+    removeCheckedElementsButton.textContent = "Remove all";
     removeCheckedElementsButton.className = "removeAll";
     removeCheckedElementsButton.addEventListener(
       "click",
@@ -586,7 +597,8 @@ const removeRow = (rowIndex) => {
 
 const removeAllButton = () => {
   const removeAllButton = document.querySelector(".removeAll");
-  contentWrapper.removeChild(removeAllButton);
+  const table = document.querySelector("table");
+  table.removeChild(removeAllButton);
 };
 
 const handlePageInput = (e, pageInput) => {

@@ -133,6 +133,8 @@ const createCells = (element, row) => {
 
 const createTableBody = (data) => {
   const slicedData = getSlicedData(data);
+
+  console.log(slicedData, "slicedData");
   const tableBody = document.querySelector("tbody");
 
   tableBody.innerHTML = "";
@@ -360,6 +362,10 @@ const filterData = () => {
 const refreshSpecificElementsData = () => {
   const filteredData = filterData();
 
+  const totalPages = getTotalPages();
+
+  if (filters.page > totalPages) filters.page = totalPages;
+
   fillPaginationBar();
   createTableBody(filteredData);
 };
@@ -465,6 +471,8 @@ const removeRow = (rowIndex) => {
 
 const getSlicedData = (data) => {
   const { page, limit } = filters;
+
+  console.log(page);
 
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;

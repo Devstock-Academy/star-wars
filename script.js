@@ -133,8 +133,6 @@ const createCells = (element, row) => {
 
 const createTableBody = (data) => {
   const slicedData = getSlicedData(data);
-
-  console.log(slicedData, "slicedData");
   const tableBody = document.querySelector("tbody");
 
   tableBody.innerHTML = "";
@@ -142,6 +140,7 @@ const createTableBody = (data) => {
   if (slicedData.length === 0) {
     const noDataRow = document.createElement("tr");
     const noDataCell = document.createElement("td");
+
     noDataCell.setAttribute("colspan", 6);
     noDataCell.classList.add("noData");
     noDataCell.innerHTML =
@@ -153,6 +152,7 @@ const createTableBody = (data) => {
 
   slicedData.forEach((element) => {
     const row = document.createElement("tr");
+
     tableBody.appendChild(row);
     createCells(element, row);
   });
@@ -471,9 +471,6 @@ const removeRow = (rowIndex) => {
 
 const getSlicedData = (data) => {
   const { page, limit } = filters;
-
-  console.log(page);
-
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
   const slicedData = data.slice(startIndex, endIndex);

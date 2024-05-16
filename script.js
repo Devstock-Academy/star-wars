@@ -15,6 +15,7 @@ const filters = {
   searchText: "",
   limit: 10,
   page: 1,
+  filteredData: [],
 };
 
 const sounds = {
@@ -124,10 +125,8 @@ const handleButtonClick = (e) => {
   addPaginationBar();
   fillSearchBar();
   fillTableHead();
-  fillPaginationBar();
 
-  const filteredData = filterData();
-  createTableBody(filteredData);
+  refreshSpecificElementsData();
 };
 
 const getHeaderNames = () => {
@@ -193,12 +192,13 @@ const filterData = () => {
       element[filteredKeyword].toLowerCase().includes(searchText.toLowerCase())
     );
   }
+
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
 
-  filteredData = filteredData.slice(startIndex, endIndex);
+  filters.filteredData = filteredData;
 
-  return filteredData;
+  return filteredData.slice(startIndex, endIndex);
 };
 
 const createCells = (element, row) => {
@@ -264,19 +264,21 @@ const createTableBody = (data) => {
   });
 };
 
-const fillSearchBar = () => {
+const fillSearchBar = (remove) => {
   const inputs = Array.from(document.querySelectorAll(".searchBar"));
   const numberOfElements = fullTableRecords.length;
   const [searchById, searchByText] = inputs;
 
-  searchById.value = null;
+  if (!remove) {
+    searchByText.value = null;
+    searchById.value = null;
+  }
   searchById.placeholder = !numberOfElements
     ? `0 from 0`
     : `1 from ${numberOfElements}`;
   searchById.disabled = !numberOfElements;
   searchById.min = 1;
   searchById.max = numberOfElements;
-  searchByText.value = null;
   searchByText.placeholder =
     clickedButtonName === "films" ? "Search by title" : "Search by name";
   searchByText.disabled = !numberOfElements;
@@ -290,16 +292,20 @@ const handleSearchById = (e, searchById) => {
   }
 
   filters.searchId = value;
-  fillPaginationBar();
 
-  const filteredData = filterData();
-
-  createTableBody(filteredData);
+  refreshSpecificElementsData();
 };
 
 const handleSearchByName = (e) => {
   filters.searchText = e.target.value;
+
+  refreshSpecificElementsData();
+};
+
+const refreshSpecificElementsData = () => {
   const filteredData = filterData();
+
+  fillPaginationBar();
   createTableBody(filteredData);
 };
 
@@ -310,11 +316,7 @@ const handleLimitChange = (e) => {
   filters.limit = newLimit;
   filters.page = Math.floor(firstItemIndex / newLimit) + 1;
 
-  fillPaginationBar();
-
-  const filteredData = filterData();
-
-  createTableBody(filteredData);
+  refreshSpecificElementsData();
 };
 
 const addPaginationBar = () => {
@@ -465,13 +467,33 @@ const handlePagination = (direction) => {
 
 const getTotalPages = () => {
   const { limit } = filters;
-  const totalRecords = fullTableRecords.length;
-  const totalPages = Math.ceil(totalRecords / limit);
+
+  const collection = getCollectionToUse();
+
+  const totalPages = Math.ceil(collection / limit)
+    ? Math.ceil(collection / limit)
+    : 1;
+
   return totalPages;
+};
+
+const getCollectionToUse = () => {
+  const { filteredData, searchId, searchText } = filters;
+  let totalRecords;
+
+  if ((searchId || searchText) && filteredData.length === 0) {
+    totalRecords = 0;
+    filters.page = 1;
+  } else if (filteredData.length !== 0) {
+    totalRecords = filteredData.length;
+  } else totalRecords = fullTableRecords.length;
+
+  return totalRecords;
 };
 
 const fillPaginationBar = () => {
   const totalPages = getTotalPages();
+  const collection = getCollectionToUse();
   const prevButton = document.querySelector(".prev");
   const nextButton = document.querySelector(".next");
   const paginationInput = document.querySelector(".paginationInput");
@@ -479,10 +501,10 @@ const fillPaginationBar = () => {
   const select = document.querySelector("select");
 
   select.value = filters.limit;
-  select.disabled = fullTableRecords.length === 0;
+  select.disabled = collection === 0;
   paginationInput.value = filters.page;
   paginationInput.max = totalPages;
-  paginationInput.disabled = fullTableRecords.length === 0;
+  paginationInput.disabled = collection === 0;
   totalPagesSpan.innerHTML = `z ${totalPages}`;
   nextButton.disabled = filters.page >= totalPages;
   prevButton.disabled = filters.page <= 1;
@@ -558,12 +580,10 @@ const handleRemoveAllButton = () => {
   if (filters.page > totalPages) {
     filters.page = totalPages;
   }
-  removeAllButton();
-  fillPaginationBar();
-  fillSearchBar();
 
-  const filteredData = filterData();
-  createTableBody(filteredData);
+  removeAllButton();
+  fillSearchBar();
+  refreshSpecificElementsData();
 };
 
 const removeRow = (rowIndex) => {
@@ -588,10 +608,10 @@ const removeRow = (rowIndex) => {
     filters.page = totalPages;
   }
 
-  fillPaginationBar();
-  fillSearchBar();
-
   const filteredData = filterData();
+
+  fillSearchBar(true);
+  fillPaginationBar();
   createTableBody(filteredData);
 };
 

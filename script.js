@@ -65,7 +65,6 @@ const createTopBar = () => {
     document.body.classList.add("darkTheme");
   });
 };
-createTopBar();
 
 const createButtons = () => {
   const mainButtonWrapper = document.createElement("div");
@@ -84,121 +83,13 @@ const createButtons = () => {
 };
 createButtons();
 
-const addStarWarsLogo = () => {
+const createStarWarsLogo = () => {
   const logo = document.createElement("img");
 
   logo.src = "./images/starWars.png";
   logo.id = "logo";
 
   contentWrapper.appendChild(logo);
-};
-
-addStarWarsLogo();
-
-const handleButtonClick = (e) => {
-  const logo = document.querySelector("#logo");
-
-  if (logo) logo.remove();
-
-  clickedButtonName = e.target.innerHTML;
-  fullTableRecords = preparedTableData();
-
-  document.querySelectorAll(".collectionButton").forEach((button) => {
-    button.classList.remove("active");
-  });
-  e.target.classList.add("active");
-
-  if (!clickedButton) {
-    addSearchBar();
-    addTable();
-  }
-  const paginationBar = document.querySelector("#paginationBar");
-  if (paginationBar) {
-    paginationBar.remove();
-  }
-
-  clickedButton = true;
-  filters.page = 1;
-  filters.searchId = null;
-  filters.searchText = "";
-
-  addPaginationBar();
-  fillSearchBar();
-  fillTableHead();
-
-  refreshSpecificElementsData();
-};
-
-const getHeaderNames = () => {
-  const patternElement = rowData[clickedButtonName][0];
-  const threeFirstKeys = Object.keys(patternElement).splice(0, 3);
-
-  const headers = ["id", ...threeFirstKeys, "created", "actions"];
-
-  return headers;
-};
-
-const fillTableHead = () => {
-  const headerNames = getHeaderNames();
-  const tableHead = document.querySelector("thead");
-
-  tableHead.innerHTML = "";
-
-  headerNames.forEach((header) => {
-    const tableHeadCell = document.createElement("th");
-    tableHeadCell.innerHTML = header.replace("_", " ").toUpperCase();
-    if (header === "id") {
-      tableHeadCell.className = "idCell";
-    }
-    if (header === "actions") {
-      tableHeadCell.className = "actionsCell";
-    }
-    tableHead.appendChild(tableHeadCell);
-  });
-};
-
-const preparedTableData = () => {
-  const bodyData = rowData[clickedButtonName];
-  const headerNames = getHeaderNames();
-
-  const modifiedData = bodyData.map((element, index) => {
-    const modifiedRowData = {};
-    headerNames.forEach((tableHeadName) => {
-      if (tableHeadName === "id") {
-        modifiedRowData[tableHeadName] = index + 1;
-      } else if (tableHeadName === "created") {
-        modifiedRowData[tableHeadName] = formatDate(element[tableHeadName]);
-      } else modifiedRowData[tableHeadName] = element[tableHeadName];
-    });
-
-    return modifiedRowData;
-  });
-  return modifiedData;
-};
-
-const filterData = () => {
-  const { searchId, searchText, limit, page } = filters;
-
-  let filteredData = fullTableRecords;
-
-  if (searchId) {
-    filteredData = filteredData.filter((element) => element.id === searchId);
-  }
-
-  if (searchText) {
-    const filteredKeyword = clickedButtonName === "films" ? "title" : "name";
-
-    filteredData = filteredData.filter((element) =>
-      element[filteredKeyword].toLowerCase().includes(searchText.toLowerCase())
-    );
-  }
-
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-
-  filters.filteredData = filteredData;
-
-  return filteredData.slice(startIndex, endIndex);
 };
 
 const createCells = (element, row) => {
@@ -241,11 +132,12 @@ const createCells = (element, row) => {
 };
 
 const createTableBody = (data) => {
+  const slicedData = getSlicedData(data);
   const tableBody = document.querySelector("tbody");
 
   tableBody.innerHTML = "";
 
-  if (data.length === 0) {
+  if (slicedData.length === 0) {
     const noDataRow = document.createElement("tr");
     const noDataCell = document.createElement("td");
     noDataCell.setAttribute("colspan", 6);
@@ -257,69 +149,14 @@ const createTableBody = (data) => {
     return;
   }
 
-  data.forEach((element) => {
+  slicedData.forEach((element) => {
     const row = document.createElement("tr");
     tableBody.appendChild(row);
     createCells(element, row);
   });
 };
 
-const fillSearchBar = (remove) => {
-  const inputs = Array.from(document.querySelectorAll(".searchBar"));
-  const numberOfElements = fullTableRecords.length;
-  const [searchById, searchByText] = inputs;
-
-  if (!remove) {
-    searchByText.value = null;
-    searchById.value = null;
-  }
-  searchById.placeholder = !numberOfElements
-    ? `0 from 0`
-    : `1 from ${numberOfElements}`;
-  searchById.disabled = !numberOfElements;
-  searchById.min = 1;
-  searchById.max = numberOfElements;
-  searchByText.placeholder =
-    clickedButtonName === "films" ? "Search by title" : "Search by name";
-  searchByText.disabled = !numberOfElements;
-};
-
-const handleSearchById = (e, searchById) => {
-  const value = parseInt(e.target.value, 10);
-
-  if (value <= 0 || isNaN(value)) {
-    searchById.value = null;
-  }
-
-  filters.searchId = value;
-
-  refreshSpecificElementsData();
-};
-
-const handleSearchByName = (e) => {
-  filters.searchText = e.target.value;
-
-  refreshSpecificElementsData();
-};
-
-const refreshSpecificElementsData = () => {
-  const filteredData = filterData();
-
-  fillPaginationBar();
-  createTableBody(filteredData);
-};
-
-const handleLimitChange = (e) => {
-  const newLimit = parseInt(e.target.value, 10);
-  const firstItemIndex = (filters.page - 1) * filters.limit;
-
-  filters.limit = newLimit;
-  filters.page = Math.floor(firstItemIndex / newLimit) + 1;
-
-  refreshSpecificElementsData();
-};
-
-const addPaginationBar = () => {
+const createdPaginationBar = () => {
   const totalPages = getTotalPages();
   const paginationBar = document.createElement("div");
   const prevButton = document.createElement("button");
@@ -366,7 +203,7 @@ const addPaginationBar = () => {
   contentWrapper.appendChild(paginationBar);
 };
 
-const addSearchBar = () => {
+const createSearchBar = () => {
   const searchBarContainer = document.createElement("div");
   const searchBarIdWrapper = document.createElement("div");
   const searchBarTextWrapper = document.createElement("div");
@@ -393,6 +230,138 @@ const addSearchBar = () => {
   contentWrapper.appendChild(searchBarContainer);
 };
 
+const createDetailsTable = (data) => {
+  const detailsTable = document.createElement("table");
+  const thead = document.createElement("thead");
+  const tableBody = document.createElement("tbody");
+
+  thead.innerHTML = "<th>KEY</th><th>VALUE</th>";
+
+  detailsTable.append(thead, tableBody);
+
+  Object.entries(data).forEach(([key, value]) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${key}</td><td class='detalisValueCell'>${value}</td>`;
+    tableBody.appendChild(tr);
+  });
+
+  return detailsTable;
+};
+
+const fillTableHead = () => {
+  const headerNames = getHeaderNames();
+  const tableHead = document.querySelector("thead");
+
+  tableHead.innerHTML = "";
+
+  headerNames.forEach((header) => {
+    const tableHeadCell = document.createElement("th");
+    tableHeadCell.innerHTML = header.replace("_", " ").toUpperCase();
+    if (header === "id") {
+      tableHeadCell.className = "idCell";
+    }
+    if (header === "actions") {
+      tableHeadCell.className = "actionsCell";
+    }
+    tableHead.appendChild(tableHeadCell);
+  });
+};
+
+const getHeaderNames = () => {
+  const patternElement = rowData[clickedButtonName][0];
+  const threeFirstKeys = Object.keys(patternElement).splice(0, 3);
+  const headers = ["id", ...threeFirstKeys, "created", "actions"];
+
+  return headers;
+};
+
+const fillSearchBar = (remove) => {
+  const inputs = Array.from(document.querySelectorAll(".searchBar"));
+  const numberOfElements = fullTableRecords.length;
+  const [searchById, searchByText] = inputs;
+
+  if (!remove) {
+    searchByText.value = null;
+    searchById.value = null;
+  }
+  searchById.placeholder = !numberOfElements
+    ? `0 from 0`
+    : `1 from ${numberOfElements}`;
+  searchById.disabled = !numberOfElements;
+  searchById.min = 1;
+  searchById.max = numberOfElements;
+  searchByText.placeholder =
+    clickedButtonName === "films" ? "Search by title" : "Search by name";
+  searchByText.disabled = !numberOfElements;
+};
+
+const fillPaginationBar = () => {
+  const totalPages = getTotalPages();
+  const collection = getCollectionToUse();
+  const prevButton = document.querySelector(".prev");
+  const nextButton = document.querySelector(".next");
+  const paginationInput = document.querySelector(".paginationInput");
+  const totalPagesSpan = document.querySelector(".totalPages");
+  const select = document.querySelector("select");
+
+  select.value = filters.limit;
+  select.disabled = !collection;
+  paginationInput.value = filters.page > totalPages ? totalPages : filters.page;
+  paginationInput.max = totalPages;
+  paginationInput.disabled = !collection;
+  totalPagesSpan.innerHTML = `z ${totalPages}`;
+  nextButton.disabled = filters.page >= totalPages;
+  prevButton.disabled = filters.page <= 1;
+};
+
+const prepareTableData = () => {
+  const bodyData = rowData[clickedButtonName];
+  const headerNames = getHeaderNames();
+
+  const preparedTableData = bodyData.map((element, index) => {
+    const modifiedRowData = {};
+    headerNames.forEach((tableHeadName) => {
+      if (tableHeadName === "id") {
+        modifiedRowData[tableHeadName] = index + 1;
+      } else if (tableHeadName === "created") {
+        modifiedRowData[tableHeadName] = formatDate(element[tableHeadName]);
+      } else modifiedRowData[tableHeadName] = element[tableHeadName];
+    });
+
+    return modifiedRowData;
+  });
+  return preparedTableData;
+};
+
+const filterData = () => {
+  const { searchId, searchText } = filters;
+
+  let filteredData = fullTableRecords;
+
+  if (searchId) {
+    filteredData = filteredData.filter((element) => element.id === searchId);
+  }
+
+  if (searchText) {
+    const filteredKeyword = clickedButtonName === "films" ? "title" : "name";
+
+    filteredData = filteredData.filter((element) =>
+      element[filteredKeyword].toLowerCase().includes(searchText.toLowerCase())
+    );
+  }
+
+  filters.filteredData = filteredData;
+
+  return filteredData;
+};
+
+const refreshSpecificElementsData = () => {
+  const filteredData = filterData();
+
+  fillPaginationBar();
+  createTableBody(filteredData);
+};
+
 const showDetails = (rowIndex) => {
   const fullRowData = rowData[clickedButtonName][rowIndex];
   const modalContainer = document.createElement("div");
@@ -414,24 +383,6 @@ const showDetails = (rowIndex) => {
   contentWrapper.appendChild(modalContainer);
 };
 
-const createDetailsTable = (data) => {
-  const detailsTable = document.createElement("table");
-  const thead = document.createElement("thead");
-  const tableBody = document.createElement("tbody");
-
-  thead.innerHTML = "<th>KEY</th><th>VALUE</th>";
-
-  detailsTable.append(thead, tableBody);
-
-  Object.entries(data).forEach(([key, value]) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${key}</td><td class='detalisValueCell'>${value}</td>`;
-    tableBody.appendChild(tr);
-  });
-
-  return detailsTable;
-};
-
 const addTable = () => {
   const table = document.createElement("table");
   const tableHead = document.createElement("thead");
@@ -440,29 +391,6 @@ const addTable = () => {
   table.append(tableHead, tableBody);
 
   contentWrapper.appendChild(table);
-};
-
-const handlePagination = (direction) => {
-  const totalPages = getTotalPages();
-  const buttonLeft = document.querySelector(".prev");
-  const buttonRight = document.querySelector(".next");
-  const paginationInput = document.querySelector(".paginationInput");
-
-  let { page } = filters;
-
-  page += direction;
-
-  if (page < 1) page = 1;
-  else if (page > totalPages) page = totalPages;
-
-  filters.page = page;
-
-  buttonLeft.disabled = page <= 1;
-  buttonRight.disabled = page >= totalPages;
-  paginationInput.value = page;
-
-  const filteredData = filterData();
-  createTableBody(filteredData);
 };
 
 const getTotalPages = () => {
@@ -491,25 +419,6 @@ const getCollectionToUse = () => {
   return totalRecords;
 };
 
-const fillPaginationBar = () => {
-  const totalPages = getTotalPages();
-  const collection = getCollectionToUse();
-  const prevButton = document.querySelector(".prev");
-  const nextButton = document.querySelector(".next");
-  const paginationInput = document.querySelector(".paginationInput");
-  const totalPagesSpan = document.querySelector(".totalPages");
-  const select = document.querySelector("select");
-
-  select.value = filters.limit;
-  select.disabled = collection === 0;
-  paginationInput.value = filters.page;
-  paginationInput.max = totalPages;
-  paginationInput.disabled = collection === 0;
-  totalPagesSpan.innerHTML = `z ${totalPages}`;
-  nextButton.disabled = filters.page >= totalPages;
-  prevButton.disabled = filters.page <= 1;
-};
-
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const year = date.getFullYear();
@@ -535,6 +444,112 @@ const playSound = (character) => {
 
   textFromKeyboard = "";
   sounds[character]++;
+};
+
+const removeRow = (rowIndex) => {
+  const { page } = filters;
+
+  fullTableRecords = fullTableRecords.filter(
+    (element) => element.id !== rowIndex
+  );
+
+  const arrayWithCheckedId = Object.keys(checkedItems).map((element) =>
+    Number(element)
+  );
+
+  if (arrayWithCheckedId.includes(rowIndex)) {
+    delete checkedItems[rowIndex];
+    if (arrayWithCheckedId.length === 1) {
+      removeAllButton();
+    }
+  }
+  const filteredData = filterData();
+  const totalPages = getTotalPages();
+
+  if (page > totalPages) {
+    filters.page = totalPages;
+  }
+
+  fillSearchBar(true);
+  fillPaginationBar();
+  createTableBody(filteredData);
+};
+
+const getSlicedData = (data) => {
+  const { page, limit } = filters;
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const slicedData = data.slice(startIndex, endIndex);
+
+  return slicedData;
+};
+
+const removeAllButton = () => {
+  const removeAllButton = document.querySelector(".removeAll");
+  const table = document.querySelector("table");
+  table.removeChild(removeAllButton);
+};
+
+const handlePageInput = (e, pageInput) => {
+  const value = parseInt(e.target.value, 10);
+  const maxValue = parseInt(pageInput.max, 10);
+
+  if (isNaN(value) || value <= 0 || maxValue < value) {
+    pageInput.value = filters.page;
+    return;
+  }
+
+  filters.page = value;
+
+  const filteredData = filterData();
+
+  createTableBody(filteredData);
+};
+
+const handleSearchById = (e, searchById) => {
+  const value = parseInt(e.target.value, 10);
+
+  if (value <= 0 || isNaN(value)) {
+    searchById.value = null;
+  }
+
+  filters.searchId = value;
+
+  refreshSpecificElementsData();
+};
+
+const handleButtonClick = (e) => {
+  const logo = document.querySelector("#logo");
+
+  if (logo) logo.remove();
+
+  clickedButtonName = e.target.innerHTML;
+  fullTableRecords = prepareTableData();
+
+  document.querySelectorAll(".collectionButton").forEach((button) => {
+    button.classList.remove("active");
+  });
+  e.target.classList.add("active");
+
+  if (!clickedButton) {
+    createSearchBar();
+    addTable();
+  }
+  const paginationBar = document.querySelector("#paginationBar");
+  if (paginationBar) {
+    paginationBar.remove();
+  }
+
+  clickedButton = true;
+  filters.page = 1;
+  filters.searchId = null;
+  filters.searchText = "";
+
+  createdPaginationBar();
+  fillSearchBar();
+  fillTableHead();
+  refreshSpecificElementsData();
 };
 
 const handleCheckbox = (e, id) => {
@@ -575,6 +590,7 @@ const handleRemoveAllButton = () => {
 
   checkedItems = {};
 
+  const filteredData = filterData();
   const totalPages = getTotalPages();
 
   if (filters.page > totalPages) {
@@ -582,58 +598,47 @@ const handleRemoveAllButton = () => {
   }
 
   removeAllButton();
-  fillSearchBar();
-  refreshSpecificElementsData();
-};
-
-const removeRow = (rowIndex) => {
-  fullTableRecords = fullTableRecords.filter(
-    (element) => element.id !== rowIndex
-  );
-
-  const arrayWithCheckedId = Object.keys(checkedItems).map((element) =>
-    Number(element)
-  );
-
-  if (arrayWithCheckedId.includes(rowIndex)) {
-    delete checkedItems[rowIndex];
-    if (arrayWithCheckedId.length === 1) {
-      removeAllButton();
-    }
-  }
-
-  const totalPages = getTotalPages();
-
-  if (filters.page > totalPages) {
-    filters.page = totalPages;
-  }
-
-  const filteredData = filterData();
-
   fillSearchBar(true);
   fillPaginationBar();
   createTableBody(filteredData);
 };
 
-const removeAllButton = () => {
-  const removeAllButton = document.querySelector(".removeAll");
-  const table = document.querySelector("table");
-  table.removeChild(removeAllButton);
+const handleSearchByName = (e) => {
+  filters.searchText = e.target.value;
+
+  refreshSpecificElementsData();
 };
 
-const handlePageInput = (e, pageInput) => {
-  const value = parseInt(e.target.value, 10);
-  const maxValue = parseInt(pageInput.max, 10);
+const handleLimitChange = (e) => {
+  const newLimit = parseInt(e.target.value, 10);
+  const firstItemIndex = (filters.page - 1) * filters.limit;
 
-  if (isNaN(value) || value <= 0 || maxValue < value) {
-    pageInput.value = filters.page;
-    return;
-  }
+  filters.limit = newLimit;
+  filters.page = Math.floor(firstItemIndex / newLimit) + 1;
 
-  filters.page = value;
+  refreshSpecificElementsData();
+};
+
+const handlePagination = (direction) => {
+  const totalPages = getTotalPages();
+  const buttonLeft = document.querySelector(".prev");
+  const buttonRight = document.querySelector(".next");
+  const paginationInput = document.querySelector(".paginationInput");
+
+  let { page } = filters;
+
+  page += direction;
+
+  if (page < 1) page = 1;
+  else if (page > totalPages) page = totalPages;
+
+  filters.page = page;
+
+  buttonLeft.disabled = page <= 1;
+  buttonRight.disabled = page >= totalPages;
+  paginationInput.value = page;
 
   const filteredData = filterData();
-
   createTableBody(filteredData);
 };
 
@@ -646,3 +651,6 @@ window.addEventListener("keydown", (e) => {
     playSound("yoda");
   }
 });
+
+createTopBar();
+createStarWarsLogo();

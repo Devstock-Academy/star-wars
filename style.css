@@ -1,0 +1,451 @@
+:root {
+  --black: #111111;
+  --white: #fff;
+  --lightgray: #e0e0e0;
+  --green: #26dd1c;
+  --darkGreen: #20b00a;
+  --red: #eb212e;
+  --darkRed: #ab1822;
+  --yellow: #f9d71c;
+  --darkYellow: #d4b116;
+}
+
+.colorfulTheme {
+  --main-color: var(--yellow);
+}
+
+.darkTheme {
+  --main-color: var(--white);
+}
+
+body {
+  background-attachment: fixed;
+  background-image: url("images/darthVader.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 0;
+  color: var(--text-color);
+}
+
+#mainAppWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+#contentWrapper {
+  width: 100%;
+  max-width: 1920px;
+  padding: 0px 20px 20px;
+  box-sizing: border-box;
+}
+
+.topBarWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--black);
+}
+
+.topBarContent {
+  max-width: 1920px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 20px;
+  box-sizing: border-box;
+}
+
+.topBarContent div {
+  display: flex;
+  gap: 10px;
+}
+
+.topBarWrapper button {
+  height: 40px;
+  min-width: 110px;
+}
+
+span {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--main-color);
+}
+
+table {
+  width: 100%;
+  position: relative;
+  border-collapse: collapse;
+  color: var(--main-color);
+}
+
+tbody {
+  color: var(--text-color);
+  border-bottom: 3px solid var(--main-color);
+}
+
+thead {
+  background-color: var(--main-color);
+  color: var(--black);
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: start;
+}
+
+th {
+  white-space: nowrap;
+}
+
+.actionsCell {
+  width: 80px;
+  text-align-last: center;
+}
+
+.idCell {
+  min-width: 50px;
+  max-width: 50px;
+}
+
+.actionsCell {
+  min-width: 80px;
+  max-width: 80px;
+}
+
+.noData {
+  text-align: center;
+  padding: 20px 0;
+}
+
+#modalContainer {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(5px);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#modalContainer table {
+  max-width: 1920px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.prev,
+.next {
+  height: 50px;
+  width: 50px;
+}
+
+.totalPages {
+  font-size: 40px;
+}
+
+#modalContainer button {
+  background-color: var(--red);
+}
+
+#modalContainer button:hover {
+  background-color: var(--darkRed);
+}
+
+#modalContainer div {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-open {
+  overflow: hidden;
+}
+
+.buttonDiv {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.detalisValueCell {
+  word-break: break-word;
+}
+
+.input.pagination {
+  width: 40px;
+  height: 30px;
+}
+
+input[type="checkbox"] {
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  border-radius: 10px;
+}
+
+button {
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 10px;
+  border: none;
+}
+
+.collectionButton.active {
+  border: 3px solid var(--main-color);
+}
+
+.searchBarWrapper {
+  height: 50px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.searchBarContainer {
+  display: flex;
+  gap: 50px;
+  padding: 20px;
+  justify-content: center;
+}
+
+.searchBar {
+  font-size: 20px;
+  font-weight: 600;
+  padding-left: 10px;
+  width: 200px;
+  height: 100%;
+  border-radius: 10px;
+  border: none;
+}
+
+#paginationBar {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+#paginationBar select {
+  margin-left: 20px;
+  font-weight: 600;
+  font-size: 35px;
+  border-radius: 10px;
+  border: none;
+  background-color: var(--main-color);
+}
+
+.paginationInput {
+  width: 50px;
+  font-size: 35px;
+  padding-left: 10px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+}
+
+label {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--green);
+}
+
+.removeAll {
+  position: absolute;
+  top: 50px;
+  right: 100px;
+  height: 100px;
+  width: 200px;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.removeAll:hover {
+  background-color: var(--lightgray);
+}
+
+.collectionButton {
+  color: var(--main-color);
+  background-color: transparent;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px -23px 25px 0px inset,
+    rgba(0, 0, 0, 0.3) 0px -36px 30px 0px inset,
+    rgba(0, 0, 0, 0.4) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px,
+    rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px,
+    rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+  font-size: 20px;
+  font-weight: 600;
+  height: 200px;
+  letter-spacing: 4px;
+  min-width: 200px;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+}
+
+.collectionButton:hover {
+  background-color: var(--main-color);
+  color: var(--black);
+  transform: scale(1.2);
+}
+
+.mainButtonWrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.colorfulTheme {
+  color: var(--red);
+  background-color: var(--yellow);
+}
+
+.colorfulTheme:hover {
+  background-color: var(--darkYellow);
+}
+
+.darkTheme {
+  background-color: var(--white);
+  color: var(--black);
+}
+
+.darkTheme:hover {
+  background-color: var(--lightgray);
+}
+
+.detailsButton {
+  background-color: var(--green);
+}
+
+.detailsbutton:hover {
+  background-color: var(--darkGreen);
+}
+
+.removeButton {
+  background-color: var(--red);
+}
+
+.removeButton:hover {
+  background-color: var(--darkRed);
+}
+
+.actionsCell button {
+  margin-bottom: 5px;
+}
+
+img {
+  width: 80%;
+  height: 80%;
+}
+
+@media screen and (max-width: 768px) {
+  table {
+    font-size: 12px;
+  }
+
+  label {
+    display: none;
+  }
+
+  .idCell {
+    min-width: 40px;
+    max-width: 40px;
+    padding-left: 0;
+  }
+
+  th,
+  td {
+    padding: 5px;
+    word-break: break-all;
+  }
+
+  .actionsCell {
+    min-width: 60px;
+    max-width: 60px;
+    padding-right: 0;
+  }
+
+  .topBarContent {
+    flex-direction: column;
+  }
+
+  span {
+    text-align: center;
+  }
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+  }
+
+  .searchBarContainer {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .searchBar {
+    flex: 1;
+  }
+
+  #contentWrapper {
+    padding: 0px 10px 10px;
+  }
+
+  .removeAll {
+    top: 30px;
+    right: 70px;
+    height: 70px;
+    width: 140px;
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  table {
+    font-size: 10px;
+  }
+
+  th {
+    font-size: 10px;
+  }
+
+  .idCell {
+    min-width: 15px;
+    max-width: 15px;
+  }
+
+  .actionsCell {
+    min-width: 50px;
+    max-width: 50px;
+  }
+
+  .mainButtonWrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .collectionButton {
+    height: 50px;
+    width: 80%;
+  }
+  .removeAll {
+    top: 27px;
+    right: 57px;
+    height: 50px;
+    width: 100px;
+  }
+}

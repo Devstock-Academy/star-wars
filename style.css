@@ -487,8 +487,6 @@ img {
   }
 
   .collectionButton:hover {
-    background-color: var(--main-color);
-    color: var(--black);
     transform: scaleY(1.1);
   }
 }
